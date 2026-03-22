@@ -1,0 +1,991 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Inovação Quest — Aprenda Inovação e Desenvolvimento de Negócios jogando! 5 mundos, 15 fases, quizzes e recompensas.">
+<title>🚀 Inovação Quest — Aprenda Inovação e Empreendedorismo Jogando</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Press+Start+2P&display=swap');
+
+/* ── TOKENS ─────────────────────── */
+:root {
+  --bg:      #04080f;
+  --surf:    #080f1e;
+  --surf2:   #0d1830;
+  --surf3:   #122040;
+  --bord:    #1a2e50;
+  --bord2:   #2a5090;
+  --acc:     #38bdf8;   /* sky blue */
+  --acc-dk:  #0369a1;
+  --acc-glow:#38bdf820;
+  --ylw:     #fbbf24;
+  --grn:     #4ade80;
+  --red:     #f87171;
+  --pnk:     #f472b6;
+  --txt:     #e0f2fe;
+  --muted:   #4a7090;
+  --r:       15px;
+  --rsm:     9px;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  background: var(--bg); color: var(--txt);
+  font-family: 'Syne', system-ui, sans-serif;
+  font-weight: 600; min-height: 100vh;
+  overflow-x: hidden; -webkit-font-smoothing: antialiased;
+}
+button { font-family: inherit; cursor: pointer; border: none; outline: none; }
+.px { font-family: 'Press Start 2P', monospace; }
+
+/* ── BACKGROUND ────────────────────── */
+body::before {
+  content: ''; position: fixed; inset: 0; z-index: 0; pointer-events: none;
+  background:
+    radial-gradient(ellipse 100% 55% at 50% -5%, #0c2a5088 0%, transparent 70%),
+    radial-gradient(1.5px 1.5px at 10% 20%, #38bdf855, transparent),
+    radial-gradient(1px   1px   at 28% 72%, #ffffff33, transparent),
+    radial-gradient(2px   2px   at 60% 10%, #fbbf2444, transparent),
+    radial-gradient(1px   1px   at 80% 82%, #38bdf833, transparent),
+    radial-gradient(1.5px 1.5px at 93% 35%, #ffffff22, transparent),
+    radial-gradient(1px   1px   at 45% 55%, #f472b622, transparent);
+}
+
+/* ── SCREENS ────────────────────────── */
+.screen { display: none; position: relative; z-index: 1; min-height: 100vh; }
+.screen.on { display: flex; flex-direction: column; }
+
+/* ── BUTTONS ────────────────────────── */
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  border-radius: var(--rsm); font-family: 'Press Start 2P', monospace;
+  font-size: 11px; letter-spacing: .4px;
+  transition: transform .12s, box-shadow .12s, top .12s;
+  position: relative; top: 0; user-select: none; padding: 14px 30px;
+}
+.btn:active { top: 4px !important; box-shadow: none !important; }
+.btn-acc {
+  background: var(--acc); color: #021018;
+  box-shadow: 0 5px 0 var(--acc-dk), 0 0 28px var(--acc-glow);
+}
+.btn-acc:hover { transform: translateY(-2px); box-shadow: 0 7px 0 var(--acc-dk), 0 0 50px var(--acc-glow); }
+.btn-ylw { background: var(--ylw); color: #1a0e00; box-shadow: 0 5px 0 #92400e; }
+.btn-ylw:hover { transform: translateY(-2px); box-shadow: 0 7px 0 #92400e; }
+.btn-grn { background: var(--grn); color: #021408; box-shadow: 0 5px 0 #15803d; }
+.btn-grn:hover { transform: translateY(-2px); box-shadow: 0 7px 0 #15803d; }
+.btn-ghost { background: transparent; color: var(--muted); border: 2px solid var(--bord); box-shadow: none; }
+.btn-ghost:hover { border-color: var(--acc); color: var(--acc); transform: none; }
+.btn-sm  { padding: 9px 18px; font-size: 9px; }
+.btn-lg  { padding: 18px 44px; font-size: 13px; }
+
+/* ── TOP BAR ────────────────────────── */
+.topbar {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 13px 20px; background: var(--surf);
+  border-bottom: 2px solid var(--bord); gap: 12px; flex-wrap: wrap; z-index: 10;
+}
+.tlogo { font-size: clamp(7px, 1.5vw, 10px); color: var(--acc); }
+.xpbadge {
+  display: flex; align-items: center; gap: 7px;
+  background: var(--surf2); border: 2px solid var(--acc);
+  border-radius: 50px; padding: 6px 16px;
+  font-size: 14px; font-weight: 800; color: var(--acc);
+}
+
+/* ── ANIMATIONS ─────────────────────── */
+@keyframes floatY   { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-14px)} }
+@keyframes fadeUp   { from{opacity:0;transform:translateY(20px)} to{opacity:1;transform:translateY(0)} }
+@keyframes slideIn  { from{opacity:0;transform:translateX(32px)} to{opacity:1;transform:translateX(0)} }
+@keyframes pulse    { 0%,100%{box-shadow:0 0 0 0 #38bdf844} 50%{box-shadow:0 0 0 8px #38bdf800} }
+@keyframes spin     { to{transform:rotate(360deg)} }
+@keyframes confFall { 0%{transform:translateY(-20px) rotate(0);opacity:1} 100%{transform:translateY(110vh) rotate(720deg);opacity:0} }
+
+/* ── INTRO ──────────────────────────── */
+#intro {
+  align-items: center; justify-content: center; text-align: center;
+  padding: 40px 20px;
+  background: radial-gradient(ellipse 110% 70% at 50% 15%, #0c2a50 0%, var(--bg) 68%);
+}
+.intro-rocket { font-size: 76px; display: block; animation: floatY 1.8s ease-in-out infinite; margin-bottom: 20px; }
+.intro-title {
+  font-size: clamp(20px, 4.5vw, 38px); color: var(--acc);
+  text-shadow: 0 0 60px #38bdf866, 4px 4px 0 #023a5a;
+  line-height: 1.8; margin-bottom: 12px;
+}
+.intro-sub { font-size: clamp(13px, 2vw, 17px); color: var(--muted); margin-bottom: 36px; font-weight: 700; }
+.pill-row { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; margin-bottom: 40px; }
+.pill { background: var(--surf2); border: 2px solid var(--bord); border-radius: 50px; padding: 7px 16px; font-size: 13px; white-space: nowrap; }
+.pill span { color: var(--acc); }
+.intro-note { font-size: 12px; color: var(--muted); margin-top: 28px; line-height: 1.9; max-width: 400px; }
+.intro-note strong { color: var(--txt); }
+
+/* ── MAP ────────────────────────────── */
+#map { padding: 0; }
+.map-inner { padding: 24px 18px; max-width: 1120px; margin: 0 auto; width: 100%; }
+.map-h { text-align: center; font-size: clamp(14px, 3vw, 26px); color: var(--acc); margin-bottom: 6px; }
+.map-p { text-align: center; color: var(--muted); font-size: 14px; margin-bottom: 30px; }
+.wgrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(255px, 1fr)); gap: 16px; }
+
+/* WORLD CARD */
+.wc {
+  background: var(--surf); border: 2px solid var(--bord);
+  border-radius: var(--r); padding: 22px;
+  cursor: pointer; transition: transform .2s, border-color .2s, box-shadow .2s;
+  position: relative; overflow: hidden;
+}
+.wc::after { content:''; position:absolute; inset:0; background:linear-gradient(135deg,#38bdf80a,transparent 55%); opacity:0; transition:opacity .2s; }
+.wc:hover:not(.locked) { transform: translateY(-5px); border-color: var(--bord2); box-shadow: 0 14px 40px #00000066; }
+.wc:hover:not(.locked)::after { opacity: 1; }
+.wc.locked { opacity: .4; cursor: not-allowed; filter: grayscale(.6); }
+.wc.done   { border-color: var(--grn); }
+.wc-corner { position: absolute; top: 13px; right: 13px; font-size: 11px; font-weight: 800; padding: 3px 9px; border-radius: 50px; background: var(--surf3); }
+.wc-corner.star { color: var(--ylw); }
+.wc-corner.lock { font-size: 19px; background: none; }
+.wc-emoji { font-size: 46px; display: block; margin-bottom: 10px; }
+.wc-tag   { font-size: 9px; color: var(--muted); margin-bottom: 6px; }
+.wc-name  { font-size: 15px; font-weight: 800; margin-bottom: 7px; line-height: 1.4; }
+.wc-desc  { font-size: 12px; color: var(--muted); margin-bottom: 16px; line-height: 1.75; }
+.dots { display: flex; gap: 6px; }
+.dot { width: 30px; height: 30px; border-radius: 50%; background: var(--surf2); border: 2px solid var(--bord); display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 800; color: var(--muted); transition: all .2s; }
+.dot.done { background: var(--grn);  border-color: #15803d; color: #021408; }
+.dot.cur  { background: var(--acc);  border-color: var(--acc-dk); color: #021018; animation: pulse 2s infinite; }
+
+/* ── LEVEL ──────────────────────────── */
+#lvl { padding: 0; }
+.lvl-inner { max-width: 800px; margin: 0 auto; padding: 22px 18px; width: 100%; }
+.lvl-nav { display: flex; align-items: center; gap: 12px; margin-bottom: 22px; flex-wrap: wrap; }
+.lvl-badge { background: var(--surf2); border: 2px solid var(--bord); border-radius: var(--rsm); padding: 6px 13px; font-size: 9px; color: var(--acc); white-space: nowrap; }
+.pbar-wrap { flex: 1; min-width: 60px; height: 10px; background: var(--surf2); border-radius: 10px; overflow: hidden; }
+.pbar-fill { height: 100%; border-radius: 10px; background: linear-gradient(90deg, var(--pnk), var(--acc)); transition: width .55s cubic-bezier(.4,0,.2,1); }
+
+/* LEARN */
+.card { background: var(--surf); border: 2px solid var(--bord); border-radius: var(--r); padding: 28px; }
+.l-tag { display: inline-block; padding: 4px 13px; background: var(--ylw); color: #1a0e00; border-radius: 50px; font-size: 10px; font-weight: 800; margin-bottom: 14px; }
+.l-title { font-size: clamp(16px, 2.8vw, 23px); font-weight: 800; margin-bottom: 13px; line-height: 1.35; }
+.l-body  { font-size: 14px; color: var(--muted); line-height: 1.9; margin-bottom: 18px; }
+.l-body strong { color: var(--txt); }
+.cgrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(185px, 1fr)); gap: 11px; margin: 16px 0; }
+.ci { background: var(--surf2); border: 2px solid var(--bord); border-radius: 12px; padding: 14px; }
+.ci-ico  { font-size: 26px; margin-bottom: 7px; }
+.ci-name { font-size: 12px; font-weight: 800; color: var(--acc); margin-bottom: 5px; }
+.ci-text { font-size: 12px; color: var(--muted); line-height: 1.65; }
+.ibox { background: #38bdf80c; border: 2px solid var(--acc); border-radius: 12px; padding: 13px 15px; font-size: 13px; line-height: 1.75; margin-top: 16px; color: var(--txt); }
+.ibox.ylw { background: #fbbf240c; border-color: var(--ylw); }
+
+/* QUIZ */
+.qmeta { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+.qcount { font-size: 12px; color: var(--muted); }
+.qxp { background: var(--surf2); border: 2px solid var(--acc); border-radius: 50px; padding: 5px 13px; font-size: 12px; color: var(--acc); }
+.question { font-size: clamp(14px, 2.3vw, 18px); font-weight: 800; margin-bottom: 24px; line-height: 1.55; }
+.opts { display: flex; flex-direction: column; gap: 11px; margin-bottom: 18px; }
+.opt { background: var(--surf2); border: 2px solid var(--bord); border-radius: 12px; padding: 14px 18px; text-align: left; font-size: 14px; font-weight: 700; color: var(--txt); transition: border-color .14s, background .14s; display: flex; align-items: flex-start; gap: 12px; line-height: 1.55; }
+.opt:hover:not(:disabled) { border-color: var(--acc); background: #38bdf80a; }
+.opt:disabled { cursor: default; }
+.opt.ok  { border-color: var(--grn) !important; background: #4ade800d !important; }
+.opt.bad { border-color: var(--red) !important; background: #f871710d !important; }
+.opt-k { min-width: 28px; height: 28px; border-radius: 6px; background: var(--bord); display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 900; flex-shrink: 0; margin-top: 1px; transition: background .14s; }
+.opt.ok  .opt-k { background: var(--grn); color: #021408; }
+.opt.bad .opt-k { background: var(--red); color: #1a0000; }
+.fb { border-radius: 12px; padding: 13px 15px; font-size: 13px; line-height: 1.75; font-weight: 700; display: none; margin-bottom: 14px; }
+.fb.show { display: block; }
+.fb.ok  { background: #4ade800d; border: 2px solid var(--grn); color: var(--grn); }
+.fb.bad { background: #f871710d; border: 2px solid var(--red); color: var(--txt); }
+
+/* ── RESULT ─────────────────────────── */
+#res { align-items: center; justify-content: center; padding: 40px 20px; background: radial-gradient(ellipse 110% 65% at 50% 50%, #0c2a50 0%, var(--bg) 68%); }
+.res-box { background: var(--surf); border: 2px solid var(--bord); border-radius: 20px; padding: 44px 36px; text-align: center; max-width: 460px; width: 100%; animation: fadeUp .45s ease; }
+.res-emoji { font-size: 70px; display: block; animation: floatY 1.8s ease-in-out infinite; margin-bottom: 14px; }
+.res-title { font-size: 22px; font-weight: 800; color: var(--acc); margin-bottom: 8px; }
+.res-sub   { font-size: 14px; color: var(--muted); margin-bottom: 28px; line-height: 1.65; }
+.res-stars { font-size: 40px; margin-bottom: 20px; letter-spacing: 4px; }
+.res-xp { background: #38bdf80d; border: 2px solid var(--acc); border-radius: 12px; padding: 14px; font-size: 18px; font-weight: 800; color: var(--acc); margin-bottom: 28px; }
+.res-btns { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
+
+/* ── CONFETTI ───────────────────────── */
+#conf { position: fixed; inset: 0; pointer-events: none; z-index: 9999; overflow: hidden; }
+.cp   { position: absolute; border-radius: 2px; animation: confFall 2.8s linear forwards; }
+
+/* ── MISC ───────────────────────────── */
+::-webkit-scrollbar { width: 7px; }
+::-webkit-scrollbar-track { background: var(--bg); }
+::-webkit-scrollbar-thumb { background: var(--bord); border-radius: 4px; }
+@media (max-width: 520px) { .card { padding: 18px; } .res-box { padding: 28px 16px; } .btn-lg { padding: 14px 22px; font-size: 11px; } }
+</style>
+</head>
+<body>
+
+<!-- ═══ INTRO ═══ -->
+<div id="intro" class="screen on">
+  <span class="intro-rocket">🚀</span>
+  <h1 class="intro-title px">INOVAÇÃO<br>QUEST</h1>
+  <p class="intro-sub">Aprenda Inovação e Desenvolvimento de Negócios jogando!</p>
+  <div class="pill-row">
+    <div class="pill">🗺️ <span>5</span> Mundos</div>
+    <div class="pill">⚔️ <span>15</span> Fases</div>
+    <div class="pill">🧠 <span>45</span> Questões</div>
+    <div class="pill">⭐ Estrelas & XP</div>
+    <div class="pill">💾 Progresso Salvo</div>
+  </div>
+  <button class="btn btn-acc btn-lg" onclick="showMap()">▶ INICIAR JORNADA</button>
+  <p class="intro-note">
+    Conteúdo baseado no material de<br>
+    <strong>Inovação e Desenvolvimento de Negócios · Técnico em Administração</strong><br>
+    Educação Profissional Paulista
+  </p>
+</div>
+
+<!-- ═══ MAP ═══ -->
+<div id="map" class="screen">
+  <div class="topbar">
+    <span class="tlogo px">INOVAÇÃO QUEST</span>
+    <div class="xpbadge">🪙 <span id="xp1">0</span> XP</div>
+  </div>
+  <div class="map-inner">
+    <h2 class="map-h px">🗺️ Mapa do Mundo</h2>
+    <p class="map-p">Escolha um mundo para explorar e ganhar XP!</p>
+    <div class="wgrid" id="wgrid"></div>
+  </div>
+</div>
+
+<!-- ═══ LEVEL ═══ -->
+<div id="lvl" class="screen">
+  <div class="topbar">
+    <span class="tlogo px">INOVAÇÃO QUEST</span>
+    <div class="xpbadge">🪙 <span id="xp2">0</span> XP</div>
+  </div>
+  <div class="lvl-inner">
+    <div class="lvl-nav">
+      <button class="btn btn-ghost btn-sm" onclick="showMap()">← Mapa</button>
+      <div class="lvl-badge px" id="lbadge"></div>
+      <div class="pbar-wrap"><div class="pbar-fill" id="pbar" style="width:0%"></div></div>
+    </div>
+    <div id="lcontent"></div>
+  </div>
+</div>
+
+<!-- ═══ RESULT ═══ -->
+<div id="res" class="screen">
+  <div class="res-box">
+    <span class="res-emoji" id="re">🏆</span>
+    <div class="res-title" id="rt"></div>
+    <div class="res-sub"   id="rs"></div>
+    <div class="res-stars" id="rstar"></div>
+    <div class="res-xp"    id="rxp"></div>
+    <div class="res-btns">
+      <button class="btn btn-ghost btn-sm" onclick="showMap()">🗺️ Mapa</button>
+      <button class="btn btn-grn btn-sm" id="rnext">Próxima Fase →</button>
+    </div>
+  </div>
+</div>
+
+<div id="conf"></div>
+
+<script>
+/* ═══════════════════════════════
+   DADOS DO JOGO
+═══════════════════════════════ */
+const W = [
+
+/* ───── MUNDO 1: Conceitos Fundamentais ───── */
+{
+  emoji:'💡', name:'Conceitos Fundamentais de Inovação',
+  desc:'O que é inovação, os tipos existentes e as fases do ciclo de vida de uma inovação.',
+  levels:[
+    {
+      title:'Inovação × Invenção e os Tipos de Inovação',
+      sub:'Semana 1 · Aula 1',
+      learn:{
+        tag:'💡 O que é Inovar?',
+        title:'Inovação: muito mais que inventar!',
+        body:`<strong>Invenção</strong> é o ato de criar algo novo. <strong>Inovação</strong> é a aplicação prática e comercial dessa invenção — é transformar uma ideia em algo que gera valor real no mercado.<br><br>
+Exemplo: Thomas Edison <em>inventou</em> a lâmpada elétrica, mas foi a <em>inovação</em> nos sistemas de distribuição de eletricidade que permitiu que a invenção chegasse à casa das pessoas. Sem a inovação, a invenção sozinha não muda nada!`,
+        concepts:[
+          {ico:'🔬',name:'Invenção',txt:'Ato de criar algo novo. Pode ser genial, mas não tem obrigatoriamente aplicação prática ou valor de mercado imediato.'},
+          {ico:'🚀',name:'Inovação',txt:'Aplicação prática e comercial da invenção. Cria valor para clientes, parceiros e a sociedade como um todo.'},
+          {ico:'📦',name:'Inovação de Produto',txt:'Desenvolvimento de novos produtos ou melhorias significativas em produtos existentes. Ex: smartphone com câmera de alta resolução.'},
+          {ico:'⚙️',name:'Inovação de Processo',txt:'Novos métodos de produção ou distribuição. Ex: linha de montagem automatizada que reduz custos e tempo.'},
+          {ico:'🏢',name:'Inovação Organizacional',txt:'Mudanças na estrutura ou práticas de gestão. Ex: modelo de trabalho remoto, gestão ágil (Scrum).'},
+          {ico:'🏦',name:'Bancos Digitais',txt:'Inovaram ao oferecer serviços bancários 100% digitais, eliminando a necessidade de agências físicas e tornando o acesso mais prático.'},
+        ],
+        info:'🎯 Resumo: Invenção cria. Inovação transforma em valor! Empreendedores de sucesso sabem que a ideia genial sozinha não basta — é preciso inovar, ou seja, aplicar e gerar resultado.'
+      },
+      quiz:[
+        {q:'Qual é a diferença entre invenção e inovação?',
+         opts:['São sinônimos — significam a mesma coisa','Invenção cria algo novo; inovação é a aplicação prática que gera valor no mercado','Inovação cria algo novo; invenção é a aplicação comercial','Invenção é mais importante que inovação para os negócios'],
+         ans:1, fb:'✅ Diferença crucial! Inventar é criar algo novo. Inovar é fazer esse "algo novo" funcionar, ser útil e gerar valor — para o cliente, para o negócio, para a sociedade.'},
+        {q:'Os bancos digitais são exemplo de qual tipo de inovação?',
+         opts:['Inovação de produto apenas','Inovação de processo industrial','Inovação de modelo de negócio — nova forma de oferecer serviços bancários','Inovação organizacional interna'],
+         ans:2, fb:'✅ Modelo de negócio inovador! Bancos digitais não apenas criaram um produto novo — revolucionaram COMO os serviços bancários são entregues, tornando tudo mais acessível e sem agências físicas.'},
+        {q:'Implementar um novo método de produção que reduz custos e aumenta a eficiência é um exemplo de:',
+         opts:['Inovação de produto','Inovação de processo','Inovação organizacional','Inovação de marketing'],
+         ans:1, fb:'✅ Inovação de processo! Quando a mudança é na forma de produzir ou distribuir (não no produto em si), é inovação de processo. Ex: line de montagem de Ford, automação industrial.'}
+      ]
+    },
+    {
+      title:'Elementos-Chave da Inovação',
+      sub:'Semana 1 · Aula 2',
+      learn:{
+        tag:'🔑 O que impulsiona',
+        title:'O que torna uma inovação possível?',
+        body:`A inovação não surge do nada — ela é resultado de uma <strong>combinação de fatores</strong> que, juntos, criam o ambiente certo para transformar ideias em soluções reais e valiosas.`,
+        concepts:[
+          {ico:'✨',name:'Criatividade',txt:'A base de tudo. Gerar novas ideias e enxergar problemas de ângulos diferentes. Sem criatividade, não existe inovação.'},
+          {ico:'🔭',name:'Pesquisa e Desenvolvimento',txt:'Investimento em estudar, testar e desenvolver novas soluções. Empresas que investem em P&D inovam mais e melhor.'},
+          {ico:'🤝',name:'Colaboração',txt:'Trabalhar com diferentes setores, especialidades e perspectivas. Grandes inovações raramente surgem de uma pessoa só.'},
+          {ico:'🏗️',name:'Cultura de Inovação',txt:'Ambiente organizacional que valoriza novas ideias, aceita erros como aprendizado e incentiva a experimentação.'},
+          {ico:'🌐',name:'Tecnologias Emergentes',txt:'Adotar novas tecnologias para criar ou melhorar produtos, serviços e processos com mais eficiência.'},
+          {ico:'🎯',name:'Adaptação ao Mercado',txt:'Monitorar e responder às mudanças nas necessidades dos consumidores. Inovar sem entender o mercado é desperdício.'},
+        ],
+        info:'💡 Exemplo do Instagram Shopping: usou criatividade (nova forma de comprar), tecnologia emergente (IA para reconhecer produtos), adaptação ao mercado (usuários querem comprar sem sair do app). Todos os elementos juntos!'
+      },
+      quiz:[
+        {q:'Qual dos elementos é considerado a BASE da inovação, sem o qual ela não existe?',
+         opts:['Recursos financeiros ilimitados','Criatividade — a capacidade de gerar novas ideias e ver problemas de ângulos diferentes','Equipe de TI especializada','Aprovação da diretoria'],
+         ans:1, fb:'✅ Criatividade é o ponto de partida! Sem ela, não há inovação. Claro que dinheiro e tecnologia ajudam, mas tudo começa com a capacidade de enxergar o problema de forma diferente.'},
+        {q:'Uma empresa que aceita erros como aprendizado e incentiva experimentos está desenvolvendo:',
+         opts:['Um departamento de P&D muito caro','Cultura de inovação — ambiente que torna a inovação possível e sustentável','Comunicação formal descendente','Gestão de riscos financeiros'],
+         ans:1, fb:'✅ Cultura de inovação! Empresas inovadoras não punem quem erra ao tentar algo novo — enxergam o erro como parte do aprendizado. Google, Amazon e 3M são exemplos clássicos.'},
+        {q:'O Instagram Shopping combinou tecnologia emergente com adaptação ao mercado. Qual foi o resultado dessa combinação?',
+         opts:['Uma invenção sem impacto no negócio','Uma inovação que permite comprar produtos diretamente pelo aplicativo, sem sair da rede social','Uma mudança apenas visual no aplicativo','Uma nova forma de publicidade tradicional'],
+         ans:1, fb:'✅ Inovação com impacto! O Instagram Shopping uniu IA (reconhecimento de produtos) com a necessidade do usuário (comprar sem sair do app). Isso é usar os elementos-chave para gerar valor real.'}
+      ]
+    },
+    {
+      title:'Ciclo de Vida da Inovação',
+      sub:'Semana 1 · Aula 3',
+      learn:{
+        tag:'🔄 Da ideia ao declínio',
+        title:'As 4 fases da vida de uma inovação',
+        body:`Toda inovação passa por um <strong>ciclo de vida</strong> — nasce, cresce, atinge seu auge e eventualmente declina. Entender essas fases ajuda empresas a tomar decisões estratégicas no momento certo!`,
+        concepts:[
+          {ico:'🌱',name:'1. Formação',txt:'Geração de ideias, pesquisa e desenvolvimento, criação de protótipos. Alto investimento, poucos resultados imediatos. Foco em criar algo novo e diferente.'},
+          {ico:'📈',name:'2. Crescimento',txt:'A inovação ganha aceitação no mercado. Vendas aumentam rapidamente. Foco em melhorias incrementais e expansão de mercado.'},
+          {ico:'⛰️',name:'3. Maturidade',txt:'A inovação atinge o pico de adoção. O foco muda para eficiência e otimização de processos. Melhorias menores para manter competitividade.'},
+          {ico:'📉',name:'4. Declínio',txt:'A inovação perde relevância. Vendas caem. A empresa decide reestruturar, abandonar o produto ou investir em nova inovação. Ex: BlackBerry em 2016.'},
+        ],
+        info:'🎯 Quando um produto atinge a maturidade, as inovações se concentram em processos (reduzir custos). Na fase de crescimento, o foco é no produto (ganhar mercado). Saber em qual fase sua inovação está define a estratégia!'
+      },
+      quiz:[
+        {q:'Na fase de CRESCIMENTO do ciclo de vida da inovação, o que acontece?',
+         opts:['O produto é retirado do mercado por falta de interesse','A inovação começa a ganhar aceitação e as vendas aumentam rapidamente','O mercado está saturado e o produto atinge seu pico','Os investimentos em pesquisa são cortados'],
+         ans:1, fb:'✅ Crescimento = aceleração! As vendas disparam, o produto conquista mercado e a empresa foca em melhorias incrementais para capturar uma fatia cada vez maior de clientes.'},
+        {q:'A BlackBerry saiu do mercado de smartphones em 2016. Isso representa qual fase do ciclo de vida?',
+         opts:['Fase de formação','Fase de crescimento','Fase de maturidade','Fase de declínio'],
+         ans:3, fb:'✅ Declínio! A BlackBerry não soube inovar na velocidade que o mercado exigia. Quando o iPhone e os Android dominaram, seus smartphones perderam relevância — chegaram ao declínio.'},
+        {q:'Na fase de MATURIDADE, onde se concentram as inovações?',
+         opts:['Em criar produtos completamente novos e revolucionários','Em processos — buscando eficiência e redução de custos para manter competitividade','Em expandir agressivamente para novos mercados','Em aumentar o investimento em pesquisa e desenvolvimento'],
+         ans:1, fb:'✅ Maturidade = eficiência! Quando o produto está no auge, o diferencial já não é o produto em si — é ser mais eficiente que o concorrente. O foco migra para inovar processos e reduzir custos.'}
+      ]
+    }
+  ]
+},
+
+/* ───── MUNDO 2: Disruptiva × Incremental ───── */
+{
+  emoji:'⚡', name:'Inovação Disruptiva vs. Incremental',
+  desc:'Entenda a diferença entre inovações que transformam mercados e as que melhoram gradualmente.',
+  levels:[
+    {
+      title:'Inovação Disruptiva: conceito e exemplos',
+      sub:'Semana 2 · Aula 1',
+      learn:{
+        tag:'💥 Mudança Radical',
+        title:'O que é inovação disruptiva?',
+        body:`Inovação disruptiva é aquela que <strong>substitui ou transforma completamente o que já existe</strong>, oferecendo uma vantagem clara reconhecida pelos consumidores — em simplicidade, conveniência, acessibilidade ou custo.`,
+        concepts:[
+          {ico:'💥',name:'O que é disruptiva',txt:'Nova solução que transforma ou substitui o que existia, tornando o modelo antigo obsoleto. Cria novos mercados ou redefine os existentes.'},
+          {ico:'⚡',name:'Simplicidade',txt:'A inovação disruptiva frequentemente simplifica algo complexo. Ex: iPhone simplificou câmera + reprodutor de música + internet em um só aparelho.'},
+          {ico:'💰',name:'Acessibilidade',txt:'Leva algo antes caro ou exclusivo para mais pessoas. Ex: computação em nuvem permitiu que pequenas empresas usem tecnologia de ponta.'},
+          {ico:'🤖',name:'Inovação Tecnológica',txt:'Introduz novas tecnologias que ocasionam melhorias consideráveis em produtos, serviços ou operações.'},
+          {ico:'🔄',name:'Inovação de Modelo de Negócio',txt:'Muda como as empresas operam para competir com mais eficácia. Ex: Uber não criou carros novos — criou um novo modelo de negócio no transporte.'},
+          {ico:'🌊',name:'Efeito Dominó',txt:'Uma disrupção em um setor geralmente desencadeia mudanças em setores relacionados — como o smartphone mudou câmeras, GPS, mapas, música e mais.'},
+        ],
+        info:'🚗 Uber, Netflix, Airbnb, iFood — todos são exemplos de inovação disruptiva de modelo de negócio. Não criaram algo novo do zero: reinventaram COMO algo é feito, tornando mais simples, barato ou conveniente para o consumidor.'
+      },
+      quiz:[
+        {q:'O que caracteriza uma inovação DISRUPTIVA?',
+         opts:['Pequenas melhorias graduais em um produto já existente','Nova solução que transforma ou substitui o que existia, criando ou redefinindo mercados','Redução dos custos de produção de um produto tradicional','Melhoria na embalagem ou apresentação visual de um produto'],
+         ans:1, fb:'✅ Disruptiva transforma o jogo! Não é uma pequena melhoria — é uma mudança que torna o modelo antigo obsoleto. O streaming tornou as locadoras de DVD irrelevantes. Isso é disrupção!'},
+        {q:'O Uber é um exemplo de inovação disruptiva de:',
+         opts:['Produto — criou um carro completamente novo','Processo — nova forma de fabricar veículos','Modelo de negócio — nova forma de conectar motoristas e passageiros','Organizacional — nova estrutura de gestão de frotas'],
+         ans:2, fb:'✅ Modelo de negócio! O Uber não inventou o carro nem o táxi — reinventou COMO o serviço de transporte é oferecido e consumido. Isso é inovar no modelo de negócio.'},
+        {q:'Uma inovação disruptiva frequentemente oferece qual vantagem ao consumidor?',
+         opts:['Produto mais caro e exclusivo para poucas pessoas','Maior complexidade e mais funções avançadas','Maior simplicidade, conveniência, acessibilidade ou custo mais baixo','Menor qualidade em troca de preço mais baixo'],
+         ans:2, fb:'✅ Disruptiva democratiza! As melhores inovações disruptivas tornam algo anteriormente caro ou complexo mais simples, conveniente e acessível para muito mais pessoas.'}
+      ]
+    },
+    {
+      title:'Inovação Incremental: estratégias e impactos',
+      sub:'Semana 2 · Aula 2',
+      learn:{
+        tag:'📈 Melhoria Contínua',
+        title:'O que é inovação incremental?',
+        body:`A inovação incremental é a <strong>forma mais comum de inovação</strong>. São melhorias contínuas e progressivas em produtos, serviços ou processos já existentes — sem alterar fundamentalmente o modelo de negócio.`,
+        concepts:[
+          {ico:'📱',name:'Exemplo claro',txt:'Smartphones: cada geração traz melhorias — câmera melhor, bateria mais duradoura, processador mais rápido. Não é um produto novo, são melhorias constantes no existente.'},
+          {ico:'💬',name:'Feedback de clientes',txt:'Coletar e analisar o que os clientes dizem para identificar pequenas melhorias práticas. A voz do cliente guia a inovação incremental.'},
+          {ico:'🔧',name:'Novas tecnologias',txt:'Incorporar tecnologias emergentes nos processos atuais para aumentar eficiência — sem reformulação completa dos sistemas.'},
+          {ico:'🏗️',name:'Cultura de melhoria',txt:'Desenvolver uma cultura que valorize e incentive pequenas melhorias contínuas em todos os níveis da organização.'},
+          {ico:'⚖️',name:'Menos risco',txt:'A incremental é menos arriscada que a disruptiva — parte do que já funciona. Mas pode limitar o potencial de grandes retornos.'},
+          {ico:'🎯',name:'Onde domina',txt:'Predomina em setores maduros onde o aprimoramento contínuo é mais viável que mudanças radicais — alimentos, automóveis, eletrodomésticos.'},
+        ],
+        info:'🎯 Netflix: começou como locação de DVDs pelo correio (incremental vs. Blockbuster), depois inovou de forma disruptiva com o streaming. Muitas empresas combinam os dois tipos em momentos diferentes da sua história!'
+      },
+      quiz:[
+        {q:'Qual opção melhor define inovação INCREMENTAL?',
+         opts:['Introduz mudanças radicais que criam novos mercados do zero','Envolve melhorias graduais e contínuas em produtos ou serviços existentes','Implementa tecnologias totalmente novas e disruptivas','Evita qualquer tipo de mudança para manter a estabilidade'],
+         ans:1, fb:'✅ Incremental é evolução, não revolução! Pequenas melhorias constantes que tornam o produto ou serviço melhor ao longo do tempo. É o mais comum e o mais seguro tipo de inovação.'},
+        {q:'Quando uma empresa coleta feedback dos clientes para identificar melhorias no produto, ela está usando qual estratégia de inovação incremental?',
+         opts:['Adoção de tecnologias emergentes','Reestruturação organizacional','Melhoria baseada em feedback de clientes','Brainstorming interno da diretoria'],
+         ans:2, fb:'✅ Feedback direciona a incremental! Ouvir os clientes é uma das formas mais eficazes de identificar onde melhorar. Quem usa o produto sabe melhor onde ele ainda não é bom o suficiente.'},
+        {q:'Por que a inovação incremental é considerada menos arriscada que a disruptiva?',
+         opts:['Porque exige menos investimento em pesquisa e desenvolvimento','Porque parte do que já funciona — melhora o existente em vez de criar do zero','Porque sempre gera resultados maiores e mais rápidos','Porque não precisa de aprovação da diretoria'],
+         ans:1, fb:'✅ Parte do que funciona! Ao melhorar algo já existente, a empresa conhece o mercado, os clientes e os processos. O risco é menor — mas também o potencial de grandes retornos. Cada tipo tem seu papel!'}
+      ]
+    },
+    {
+      title:'Comparando: Disruptiva, Incremental e Sustentabilidade',
+      sub:'Semana 2 · Aula 3',
+      learn:{
+        tag:'🔍 Comparando os tipos',
+        title:'Quando usar cada tipo de inovação?',
+        body:`Disruptiva e incremental não são opostos — são ferramentas diferentes para objetivos diferentes. <strong>Empresas de sucesso usam as duas</strong> em momentos estratégicos!<br><br>
+E um tema cada vez mais central na inovação moderna: a <strong>sustentabilidade</strong> — inovar de forma que preserve os recursos naturais e crie valor sem causar danos irreversíveis ao meio ambiente e à sociedade.`,
+        concepts:[
+          {ico:'🔬',name:'Disruptiva',txt:'Use quando: o mercado está saturado, a concorrência é intensa, você quer criar um mercado novo ou a tecnologia existente tornou o modelo antigo obsoleto.'},
+          {ico:'🔧',name:'Incremental',txt:'Use quando: o produto funciona bem mas pode melhorar, os clientes estão satisfeitos mas exigem mais, você quer ganhar eficiência ou reduzir custos gradualmente.'},
+          {ico:'🌱',name:'Sustentabilidade',txt:'Capacidade de manter ou melhorar sistemas de forma que continuem funcionando eficazmente sem esgotar recursos naturais ou causar danos irreversíveis.'},
+          {ico:'♻️',name:'Inovação Sustentável',txt:'Criar soluções inovadoras que aliem lucro, benefício social e preservação ambiental — o triple bottom line do século XXI.'},
+          {ico:'💡',name:'Gestão flexível',txt:'Para promover inovação incremental, empresas organizam equipes flexíveis que incentivam comunicação e exploração de ideias em todos os níveis.'},
+          {ico:'⚠️',name:'Desafios',txt:'Inovação incremental pode limitar o potencial de grandes retornos. Disruptiva envolve mais risco. Sustentável exige mudança de mentalidade e processo.'},
+        ],
+        info:'🌍 A inovação do futuro é sustentável! Empresas que inovam preservando o meio ambiente e gerando impacto social positivo conquistam consumidores mais conscientes e criam vantagens competitivas duradouras.'
+      },
+      quiz:[
+        {q:'Qual tipo de inovação é mais indicado quando o mercado está saturado e a empresa quer criar um mercado completamente novo?',
+         opts:['Inovação incremental — melhorar o produto atual','Inovação sustentável — focar no meio ambiente','Inovação disruptiva — criar algo que transforma ou substitui o que existe','Nenhum tipo — manter o produto como está'],
+         ans:2, fb:'✅ Disruptiva para novos mercados! Quando o produto atual chegou ao limite ou o mercado está saturado, a empresa precisa de uma inovação que crie novas regras do jogo — não apenas melhorar o que já existe.'},
+        {q:'O que significa inovação sustentável?',
+         opts:['Inovar apenas em produtos de baixo custo','Criar soluções que aliem crescimento econômico, benefício social e preservação ambiental','Manter os mesmos processos para não gastar em mudanças','Inovar somente quando obrigado por legislação ambiental'],
+         ans:1, fb:'✅ Inovação sustentável é o futuro! Não é só lucro — é crescer de forma que preserve o planeta e gere valor para a sociedade. Empresas que ignoram isso perdem consumidores conscientes e criam passivos ambientais.'},
+        {q:'Uma empresa de alimentos decide criar embalagens biodegradáveis para reduzir o impacto ambiental. Que tipo de inovação é essa?',
+         opts:['Inovação disruptiva — cria um mercado completamente novo','Inovação incremental com foco em sustentabilidade','Inovação organizacional interna','Nenhuma — é apenas uma obrigação legal'],
+         ans:1, fb:'✅ Incremental sustentável! Não é uma mudança radical no produto — é uma melhoria gradual que reduz o impacto ambiental. Mostra que incrementar e ser sustentável podem (e devem) andar juntos.'}
+      ]
+    }
+  ]
+},
+
+/* ───── MUNDO 3: Análise de Casos ───── */
+{
+  emoji:'🔬', name:'Análise de Casos de Inovação Disruptiva',
+  desc:'Estude casos reais de inovação, identifique tecnologias emergentes e analise seus impactos.',
+  levels:[
+    {
+      title:'Inovação Disruptiva na Prática (Parte 1)',
+      sub:'Semana 3 · Aula 1',
+      learn:{
+        tag:'📚 Casos Reais',
+        title:'Aprendendo com exemplos de disrupção',
+        body:`Analisar casos reais de inovação disruptiva é a melhor forma de entender como ela funciona na prática. Vamos estudar exemplos que transformaram mercados inteiros!`,
+        concepts:[
+          {ico:'🍕',name:'iFood/Delivery',txt:'Restaurantes que ofereciam apenas refeições presenciais foram disruptados por apps de delivery — novos modelos de negócio criados pela combinação de smartphone + GPS + pagamento digital.'},
+          {ico:'🎬',name:'Netflix',txt:'Começou enviando DVDs pelo correio, depois inventou o streaming. Blockbuster ignorou a disrupção e faliu. Netflix enxergou antes onde o mercado iria.'},
+          {ico:'🏠',name:'Airbnb',txt:'Disruptou a indústria hoteleira sem possuir um único hotel. Conectou anfitriões e viajantes, criando um mercado antes inexistente em larga escala.'},
+          {ico:'📱',name:'iPhone',txt:'Disruptou câmeras, GPS, reprodutores de música, mapas e games — tudo em um único dispositivo. Um produto que destruiu vários mercados ao mesmo tempo.'},
+          {ico:'💡',name:'Por que Disruptam?',txt:'Identificam uma necessidade não atendida ou uma forma mais simples/barata/conveniente de resolver um problema que as soluções existentes não resolvem bem.'},
+          {ico:'🔍',name:'Viabilidade da Ideia',txt:'Antes de inovar, empreendedores analisam: há demanda real? A tecnologia existe ou é acessível? Os custos permitem escalar? O timing é certo?'},
+        ],
+        info:'🎓 Lição dos casos: toda grande disrupção começa pequena, ignorada pelos líderes do mercado. Blockbuster ignorou o Netflix. As locadoras ignoraram o DVD. Os táxis ignoraram o Uber. Inovar cedo é a vantagem.'
+      },
+      quiz:[
+        {q:'Como o Netflix disruptou a indústria do entretenimento em sua segunda fase?',
+         opts:['Criando cinemas menores e mais baratos','Inventando o conceito de filmes em cores','Substituindo DVDs físicos pelo streaming digital, tornando locadoras obsoletas','Criando novos tipos de filmes mais longos'],
+         ans:2, fb:'✅ O streaming foi a grande disrupção! O Netflix começou enviando DVDs e depois criou o streaming — tornando não só as locadoras mas também seus próprios DVDs obsoletos. Soube se disruptar antes que outros o fizessem.'},
+        {q:'Por que o Airbnb é considerado uma inovação disruptiva no setor hoteleiro?',
+         opts:['Por construir hotéis maiores e mais modernos','Por oferecer quartos mais baratos que hotéis tradicionais','Por criar um mercado de hospedagem sem possuir um único imóvel próprio','Por usar tecnologia de inteligência artificial na gestão'],
+         ans:2, fb:'✅ Novo mercado sem ativos! O Airbnb não construiu nada — conectou pessoas que tinham espaço com pessoas que precisavam de espaço. Isso é disrupção de modelo de negócio em seu estado mais puro.'},
+        {q:'Qual fator é fundamental para avaliar a viabilidade de uma ideia inovadora antes de investir?',
+         opts:['Ter um produto perfeito antes de qualquer teste','Verificar se há demanda real, tecnologia acessível e custos que permitam escalar','Garantir aprovação governamental antes de começar','Contratar os melhores especialistas do mercado antes de qualquer passo'],
+         ans:1, fb:'✅ Validar antes de investir! Ideias geniais que não têm demanda real ou custos inviáveis falham. Empreendedores de sucesso testam hipóteses antes de fazer grandes apostas.'}
+      ]
+    },
+    {
+      title:'Identificando Tecnologias Emergentes',
+      sub:'Semana 3 · Aula 2',
+      learn:{
+        tag:'🌐 Tecnologia do Futuro',
+        title:'Quais tecnologias estão transformando o mundo?',
+        body:`As <strong>tecnologias emergentes</strong> são aquelas que estão começando a ganhar escala e têm potencial para transformar radicalmente setores inteiros. Reconhecê-las cedo é vantagem competitiva!`,
+        concepts:[
+          {ico:'🤖',name:'Inteligência Artificial (IA)',txt:'Sistemas que aprendem e tomam decisões. Já transforma saúde (diagnósticos), finanças (crédito), varejo (recomendações) e muito mais.'},
+          {ico:'⛓️',name:'Blockchain',txt:'Registro distribuído e imutável de transações. Base das criptomoedas, mas com usos em contratos digitais, rastreabilidade e muito mais.'},
+          {ico:'📡',name:'Internet das Coisas (IoT)',txt:'Objetos físicos conectados à internet. Lixeiras inteligentes, carros autônomos, casas conectadas — o mundo físico se tornando digital.'},
+          {ico:'🖨️',name:'Impressão 3D',txt:'Fabricação de objetos físicos a partir de arquivos digitais. Revoluciona manufatura, medicina (próteses), construção civil e design.'},
+          {ico:'🔋',name:'Energia Limpa',txt:'Solar, eólica, hidrogênio verde — tecnologias que estão tornando energias renováveis cada vez mais viáveis e baratas.'},
+          {ico:'🧬',name:'Biotecnologia',txt:'Edição genética (CRISPR), vacinas de mRNA, medicina personalizada — tecnologias que transformam saúde e agricultura.'},
+        ],
+        info:'💡 As lixeiras inteligentes com sensores IoT do material: enviam alertas quando estão cheias, otimizando rotas dos caminhões. Resultado: menos custo, menos poluição, cidade mais limpa. Isso é tecnologia emergente gerando impacto real!'
+      },
+      quiz:[
+        {q:'As "lixeiras inteligentes com sensores" que avisam quando estão cheias são um exemplo de qual tecnologia emergente?',
+         opts:['Inteligência Artificial','Impressão 3D','Internet das Coisas (IoT) — objetos físicos conectados à internet','Blockchain'],
+         ans:2, fb:'✅ IoT na prática! Lixeiras com sensores e conexão à internet que enviam alertas automáticos são exatamente o que é a Internet das Coisas — objetos do mundo físico conectados e inteligentes.'},
+        {q:'Um sistema que analisa dados de saúde do paciente e sugere diagnósticos é exemplo de qual tecnologia emergente?',
+         opts:['Blockchain','Inteligência Artificial — sistemas que aprendem e tomam decisões','Impressão 3D','Energia limpa'],
+         ans:1, fb:'✅ Inteligência Artificial! Sistemas que aprendem com dados e tomam decisões ou sugerem ações são IA. Na medicina, a IA já consegue identificar doenças com precisão igual ou superior a especialistas humanos.'},
+        {q:'Por que identificar tecnologias emergentes cedo é uma vantagem competitiva para as empresas?',
+         opts:['Porque permite evitar qualquer investimento em tecnologia','Porque possibilita adotar a tecnologia antes dos concorrentes, criando vantagem no mercado','Porque garante que a empresa nunca precisará inovar novamente','Porque elimina completamente os riscos de novos projetos'],
+         ans:1, fb:'✅ Primeiro a mover ganha! Empresas que identificam e adotam tecnologias emergentes antes da concorrência criam vantagens difíceis de copiar — aprendizado, escala e reconhecimento de marca.'}
+      ]
+    },
+    {
+      title:'Impactos das Inovações Disruptivas',
+      sub:'Semana 3 · Aula 3',
+      learn:{
+        tag:'🌊 Efeitos em cascata',
+        title:'Como a disrupção impacta mercados e sociedade',
+        body:`As inovações disruptivas não apenas mudam um produto ou serviço — elas geram <strong>impactos em cascata</strong> que transformam mercados, modelos de negócio, empregos e a sociedade como um todo.`,
+        concepts:[
+          {ico:'📉',name:'Mercados destruídos',txt:'Locadoras, máquinas fotográficas analógicas, enciclopédias impressas, táxis convencionais — setores inteiros foram transformados ou eliminados.'},
+          {ico:'📈',name:'Novos mercados criados',txt:'A mesma disrupção que destrói cria. Streaming criou mercado de produção de conteúdo independente. Apps criaram mercado de desenvolvedores mobile.'},
+          {ico:'💼',name:'Impacto no emprego',txt:'Disrupções eliminam alguns tipos de trabalho mas criam outros. A automação eliminou funções repetitivas mas criou demanda por programadores, analistas de dados e gestores de IA.'},
+          {ico:'🌍',name:'Impacto social',txt:'Apps de delivery deram renda a milhões de entregadores. Teletrabalho permitiu que pessoas de cidades menores trabalhem para empresas globais. Há impactos positivos e negativos.'},
+          {ico:'🎯',name:'Como se preparar',txt:'Acompanhar tendências, investir em aprendizado contínuo, ser ágil para adaptar o modelo de negócio. Empresas rígidas são as mais vulneráveis à disrupção.'},
+          {ico:'🔄',name:'Resposta das incumbentes',txt:'Empresas estabelecidas podem responder à disrupção: adquirindo a empresa disruptora, criando divisões inovadoras internas ou reinventando seu próprio modelo.'},
+        ],
+        info:'🚗 Durante a pandemia, restaurantes que antes eram só presenciais foram disruptados pelo delivery. Os que inovaram (kits de preparo em casa, cardápios adaptados, parcerias com apps) sobreviveram. Os que resistiram, fecharam.'
+      },
+      quiz:[
+        {q:'Qual é um impacto POSITIVO das inovações disruptivas na sociedade?',
+         opts:['Eliminação de todos os empregos tradicionais','A criação de novos mercados e oportunidades de trabalho que antes não existiam','Redução da qualidade dos produtos disponíveis','Aumento dos preços para o consumidor final'],
+         ans:1, fb:'✅ Cria junto com destruir! Toda grande disrupção elimina alguns trabalhos mas cria outros. Apps de delivery eliminaram parte das vendas de restaurantes físicos mas criaram mercado para entregadores, programadores de apps e gestores de logística.'},
+        {q:'Como uma empresa estabelecida pode responder à disrupção antes que ela a torne obsoleta?',
+         opts:['Ignorar a disrupção e continuar com o modelo atual','Processar legalmente as empresas disruptoras','Adquirir a empresa disruptora, criar divisão inovadora interna ou reinventar seu modelo de negócio','Reduzir preços e esperar a disrupção passar'],
+         ans:2, fb:'✅ Resposta ativa! Empresas que sobrevivem à disrupção não ficam paradas. Elas adquirem startups disruptoras (Google comprou YouTube), criam divisões inovadoras (Amazon criou AWS) ou reinventam seu próprio modelo.'},
+        {q:'Quais empresas são exemplos de setores que foram profundamente impactados pela disrupção digital?',
+         opts:['Supermercados e farmácias','Locadoras, táxis convencionais e jornais impressos','Escolas e universidades públicas','Hospitais e clínicas médicas'],
+         ans:1, fb:'✅ Setores clássicos de disrupção! Blockbuster (streaming), Kodak (câmeras digitais), táxis (Uber), jornais (redes sociais e portais online) — todos foram profundamente transformados ou destruídos pela inovação digital.'}
+      ]
+    }
+  ]
+},
+
+/* ───── MUNDO 4: Empreendedorismo ───── */
+{
+  emoji:'🦁', name:'Empreendedorismo e o Empreendedor',
+  desc:'Definição, tipos de empreendedorismo, características do empreendedor e técnicas de ideação.',
+  levels:[
+    {
+      title:'O que é Empreendedorismo e seus Tipos',
+      sub:'Semana 4 · Aula 1',
+      learn:{
+        tag:'🦁 Empreender',
+        title:'O que é empreendedorismo?',
+        body:`Empreendedorismo é o <strong>processo de identificar oportunidades e criar soluções inovadoras para problemas</strong>, geralmente por meio da criação de novos negócios. Mas existem muitos tipos de empreendedores!`,
+        concepts:[
+          {ico:'💡',name:'Definição',txt:'Processo de identificar oportunidades, criar soluções inovadoras e estruturá-las em um negócio ou projeto que gere valor.'},
+          {ico:'🏠',name:'Por Necessidade (Informal)',txt:'Criam negócios por não ter alternativas no mercado formal. Ex: Maria começa a vender bolos na esquina após ficar desempregada.'},
+          {ico:'🤝',name:'Cooperado',txt:'Se unem em cooperativas para ganhar escala. Ex: artesãos que formam cooperativa para comprar materiais mais baratos e vender em maior escala.'},
+          {ico:'🏷️',name:'Franqueado',txt:'Opera uma marca já estabelecida com suporte da franqueadora. Ex: Ana abre uma franquia de fast-food com processos e marca já definidos.'},
+          {ico:'🌍',name:'Social',txt:'Foco em impacto social e humanitário. Ex: Paulo funda ONG que oferece treinamento profissional gratuito para jovens de comunidades carentes.'},
+          {ico:'🏢',name:'Corporativo (Intraempreendedor)',txt:'Inova dentro da empresa onde trabalha. Ex: Clara lidera desenvolvimento de novo software que gera milhões para a empresa.'},
+        ],
+        info:'💡 A Geração Z quer empreender! Os dados mostram: marketing/comunicação (22%), roupas e artesanato (20%), tecnologia (16%), alimentação (8%). Empreender pode ser a realização de sonhos — de qualquer tamanho!'
+      },
+      quiz:[
+        {q:'O que é empreendedorismo?',
+         opts:['Apenas abrir empresas grandes e lucrativas','Processo de identificar oportunidades e criar soluções inovadoras, geralmente por meio de novos negócios','Trabalhar em grandes corporações multinacionais','Investir em ações da bolsa de valores'],
+         ans:1, fb:'✅ Empreendedorismo é identificar e resolver! Não precisa ser uma grande empresa — pode ser um MEI, uma cooperativa ou uma ONG. O que define é a capacidade de ver oportunidades e criar soluções.'},
+        {q:'Paulo fundou uma organização sem fins lucrativos que oferece treinamento gratuito para jovens carentes. Que tipo de empreendedor é Paulo?',
+         opts:['Empreendedor por necessidade','Empreendedor corporativo','Empreendedor social','Empreendedor franqueado'],
+         ans:2, fb:'✅ Empreendedor social! Foco em impacto humanitário e social, não em lucro. Paulo usa a mentalidade empreendedora (identificar problema, criar solução, organizar recursos) para melhorar a comunidade.'},
+        {q:'Clara, gerente em uma empresa de tecnologia, lidera o desenvolvimento de um novo software inovador que gera milhões para a empresa. Que tipo de empreendedor é Clara?',
+         opts:['Empreendedor informal por necessidade','Empreendedor cooperado','Empreendedor social','Empreendedor corporativo (intraempreendedor)'],
+         ans:3, fb:'✅ Intraempreendedor! Também chamado de empreendedor corporativo — inova dentro da empresa onde trabalha. Empresas que cultivam intraempreendedores criam inovações constantes sem precisar criar novas empresas.'}
+      ]
+    },
+    {
+      title:'Características e Habilidades do Empreendedor',
+      sub:'Semana 4 · Aula 2',
+      learn:{
+        tag:'💪 Perfil do Empreendedor',
+        title:'O que faz um empreendedor ter sucesso?',
+        body:`Empreendedores de sucesso compartilham características em comum — mas nenhuma delas é inata. Todas podem ser <strong>desenvolvidas com prática, dedicação e a mentalidade certa!</strong>`,
+        concepts:[
+          {ico:'⚡',name:'Iniciativa',txt:'Começar projetos e tomar decisões sem precisar ser empurrado. Identificar oportunidades de forma proativa antes que outros as vejam.'},
+          {ico:'🛡️',name:'Resiliência',txt:'Enfrentar desafios e aprender com fracassos. Recuperar-se rapidamente de contratempos e persistir mesmo quando as coisas ficam difíceis.'},
+          {ico:'🔭',name:'Visão',txt:'Ver oportunidades onde outros veem riscos. Antecipar tendências e guiar decisões estratégicas a longo prazo.'},
+          {ico:'🌱',name:'Mentalidade de Crescimento',txt:'Crença de que habilidades podem ser desenvolvidas com esforço e prática. Enxerga desafios como oportunidades de aprendizado.'},
+          {ico:'🤸',name:'Adaptabilidade',txt:'Ajustar estratégias rapidamente quando o mercado muda. Jeff Bezos adaptou a Amazon de livraria a marketplace global a empresa de tecnologia.'},
+          {ico:'🤝',name:'Liderança',txt:'Inspirar e coordenar pessoas em torno de um objetivo. Grandes empreendedores constroem times fortes — sozinhos ninguém vai longe.'},
+        ],
+        info:'🎓 Mentalidade de crescimento (Carol Dweck): acreditar que suas habilidades são fixas é a "mentalidade fixa" — limita. Acreditar que podem crescer com esforço é a "mentalidade de crescimento" — expande. Jeff Bezos e Amazon são o exemplo máximo disso!'
+      },
+      quiz:[
+        {q:'Qual das opções melhor descreve "resiliência" como característica empreendedora?',
+         opts:['Capacidade de nunca cometer erros','Enfrentar desafios, aprender com fracassos e persistir mesmo em situações adversas','Habilidade de delegar todas as tarefas difíceis','Tendência de evitar riscos para garantir estabilidade'],
+         ans:1, fb:'✅ Resiliência é persistência inteligente! Todo empreendedor vai errar e enfrentar adversidades. O que diferencia os bem-sucedidos é a capacidade de se levantar, aprender com o erro e continuar.'},
+        {q:'A mentalidade de crescimento, segundo Carol Dweck, é a crença de que:',
+         opts:['A inteligência e as habilidades são fixas desde o nascimento','As habilidades podem ser desenvolvidas com esforço, prática e aprendizado contínuo','O sucesso é determinado apenas pela sorte','Quem falha uma vez nunca deve tentar novamente'],
+         ans:1, fb:'✅ Habilidades se desenvolvem! Pessoas com mentalidade de crescimento encaram cada desafio como chance de aprender. Jeff Bezos é o exemplo — a Amazon começou como livraria e se tornou um gigante global por essa mentalidade.'},
+        {q:'O que caracteriza a VISÃO como habilidade empreendedora?',
+         opts:['Ter boa memória para decorar tendências de mercado','Ver oportunidades onde outros veem apenas riscos e antecipar tendências futuras','Ser bom em matemática e finanças','Conseguir trabalhar muitas horas sem descanso'],
+         ans:1, fb:'✅ Visão é ver o futuro antes dos outros! Empreendedores visionários identificam necessidades antes que o mercado as reconheça. Steve Jobs com o iPhone mostrou que as pessoas queriam um produto que elas mesmas não sabiam que queriam.'}
+      ]
+    },
+    {
+      title:'Técnicas de Ideação: da Ideia ao Negócio',
+      sub:'Semana 4 · Aula 3',
+      learn:{
+        tag:'🧠 Gerar Ideias',
+        title:'Como gerar ideias inovadoras?',
+        body:`Existem técnicas estruturadas para <strong>estimular a criatividade e gerar ideias inovadoras</strong> em grupo. Conhecê-las é essencial para empreendedores e equipes de inovação!`,
+        concepts:[
+          {ico:'⚡',name:'Brainstorming',txt:'Reunião para gerar muitas ideias rapidamente sem criticar. O objetivo é quantidade — filtrar depois. Toda ideia é anotada e válida.'},
+          {ico:'🔄',name:'SCAMPER',txt:'7 perguntas estruturadas: Substituir, Combinar, Adaptar, Modificar, Propor outro uso, Eliminar, Reorganizar. Útil para melhorar o que já existe.'},
+          {ico:'✍️',name:'Brainwriting',txt:'Cada participante escreve ideias em papel e passa para o próximo, que adiciona ou melhora. Promove inclusão — sem pressão de falar em público.'},
+          {ico:'🎯',name:'Brainstorming: regra de ouro',txt:'Sem críticas durante a geração de ideias! Crítica prematura mata a criatividade. Primeiro gera, depois filtra e analisa.'},
+          {ico:'🔧',name:'SCAMPER na prática',txt:'Ex: time de marketing usa SCAMPER para reinventar uma campanha: Substituir (digital por impresso), Combinar (online + evento), Adaptar (de outra empresa)...'},
+          {ico:'💡',name:'Do problema à oportunidade',txt:'O ponto de partida da inovação é observar problemas do cotidiano. Um problema não resolvido é uma oportunidade de negócio esperando para ser criada.'},
+        ],
+        info:'🎯 No brainstorming, a turma que planeja um evento escolar gerou: workshop de habilidades administrativas, feira de empregos, competição de planos de negócios. Todas são ideias válidas — a crítica vem depois da geração!'
+      },
+      quiz:[
+        {q:'No brainstorming tradicional, qual é a regra mais importante durante a geração de ideias?',
+         opts:['Criticar as ideias ruins imediatamente para economizar tempo','Sem críticas! Toda ideia é anotada — a análise e o filtro vêm depois','Apenas gestores e especialistas podem sugerir ideias','Cada pessoa tem um tempo máximo de 30 segundos para falar'],
+         ans:1, fb:'✅ Sem crítica prematura! Esse é o princípio fundamental do brainstorming. Criticar durante a geração bloqueia a criatividade — as pessoas ficam com medo de parecer bobas. Primeiro gera, depois filtra!'},
+        {q:'A técnica SCAMPER ajuda a gerar ideias inovadoras através de:',
+         opts:['Uma sessão livre de geração de ideias sem estrutura definida','Sete abordagens estruturadas: Substituir, Combinar, Adaptar, Modificar, Propor outro uso, Eliminar, Reorganizar','Escrita individual de ideias que são trocadas entre grupos','Análise de dados de mercado para identificar oportunidades'],
+         ans:1, fb:'✅ SCAMPER é estrutura para inovar! Quando você não sabe como melhorar algo, as 7 perguntas do SCAMPER te forçam a olhar para o problema de ângulos completamente diferentes.'},
+        {q:'O Brainwriting se diferencia do Brainstorming porque:',
+         opts:['É mais rápido e gera menos ideias','Permite apenas que especialistas participem','Os participantes escrevem ideias em papel e passam para os outros adicionarem — reduz a pressão de falar em público','É feito individualmente, sem interação entre os participantes'],
+         ans:2, fb:'✅ Brainwriting é mais inclusivo! Pessoas tímidas ou introvertidas têm dificuldade de falar em voz alta em grupos. No Brainwriting, todos contribuem igualmente por escrito — ninguém é dominado pelos mais falantes.'}
+      ]
+    }
+  ]
+},
+
+/* ───── MUNDO 5: Do Plano ao Crescimento ───── */
+{
+  emoji:'📈', name:'Do Plano de Negócios ao Crescimento',
+  desc:'Da geração de ideias ao plano de negócios, implementação, recursos e expansão sustentável.',
+  levels:[
+    {
+      title:'Geração, Validação de Ideias e Plano de Negócios',
+      sub:'Semana 5 · Aula 1',
+      learn:{
+        tag:'📋 Do Sonho ao Plano',
+        title:'Como transformar uma ideia em negócio?',
+        body:`Ter uma ideia é o começo. Mas lançar um produto sem validar antes é um dos maiores erros de novos empreendedores. O caminho certo é: <strong>gerar → validar → planejar</strong>!`,
+        concepts:[
+          {ico:'💡',name:'1. Geração de ideias',txt:'Começa com a observação de problemas do cotidiano. Um problema não resolvido é uma oportunidade esperando para ser explorada.'},
+          {ico:'🧪',name:'2. Validação',txt:'Coletar feedback de amigos, familiares ou potenciais clientes para avaliar interesse e viabilidade antes de investir. Evita perder tempo e dinheiro.'},
+          {ico:'❓',name:'Perguntas de validação',txt:'"Esse produto resolveria seu problema?" "Quanto pagaria por ele?" "O que seria essencial ter?" — respostas revelam se há demanda real.'},
+          {ico:'📄',name:'3. Plano de Negócios',txt:'Documento que descreve o que sua empresa faz, como faz, para quem e como ganhará dinheiro. Organiza a visão e prevê desafios.'},
+          {ico:'📊',name:'O que tem no Plano?',txt:'Análise de mercado, descrição do produto/serviço, estratégia de marketing, plano operacional, projeção financeira e análise de riscos.'},
+          {ico:'⚠️',name:'Sem validar → falha',txt:'Lançar sem validar é aposta cega. O material mostra: empreendedor que investiu sem validar teve lançamento decepcionante — clientes não mostraram interesse.'},
+        ],
+        info:'🎓 Regra dos empreendedores de sucesso: "Fail fast, learn fast" — falhe rápido (e barato) na validação para não falhar tarde (e caro) no mercado. Validar a ideia cedo é o maior economizador de recursos em um novo negócio!'
+      },
+      quiz:[
+        {q:'Por que a validação de uma ideia é fundamental ANTES de investir no negócio?',
+         opts:['Porque exige menos investimento financeiro inicial','Porque garante que o produto será perfeito no lançamento','Para verificar se há demanda real e viabilidade, evitando perder tempo e dinheiro em ideias sem mercado','Porque facilita a obtenção de financiamento bancário'],
+         ans:2, fb:'✅ Validar antes de investir é sabedoria! Lançar sem validar é aposta cega — o material mostra exatamente isso: um empreendedor que investiu tempo e dinheiro sem validar teve um lançamento decepcionante.'},
+        {q:'O que é um Plano de Negócios?',
+         opts:['Uma lista de tarefas do dia a dia da empresa','Um documento que descreve o que a empresa faz, como faz, para quem e como ganhará dinheiro','Um relatório financeiro do primeiro ano de operação','Um contrato entre sócios da empresa'],
+         ans:1, fb:'✅ Plano de Negócios é o mapa do empreendimento! Descreve o negócio em detalhes — mercado, produto, estratégia, finanças. É essencial para organizar as ideias, atrair investidores e antecipar desafios.'},
+        {q:'Qual sequência correta descreve o processo de transformar uma ideia em negócio?',
+         opts:['Planejar → Lançar → Validar','Investir → Gerar ideias → Planejar','Gerar ideias → Validar → Criar plano de negócios → Implementar','Validar → Investir → Gerar ideias'],
+         ans:2, fb:'✅ Essa é a ordem certa! Primeiro gere ideias (observando problemas), depois valide com potenciais clientes, depois crie o plano estruturado e só então implemente. Pular etapas é o caminho para o fracasso.'}
+      ]
+    },
+    {
+      title:'Implementação do Negócio: Recursos e Aspectos Legais',
+      sub:'Semana 5 · Aula 2',
+      learn:{
+        tag:'🏗️ Tirando do Papel',
+        title:'O que é preciso para implementar um negócio?',
+        body:`Ter o plano pronto é só o começo. <strong>Implementar o negócio</strong> exige organizar três tipos de recursos e cumprir as exigências legais. Ignorar qualquer um desses pontos compromete o sucesso!`,
+        concepts:[
+          {ico:'💰',name:'Recursos Financeiros',txt:'Capital próprio (economias pessoais), investidores (em troca de participação), empréstimos bancários (crédito com garantias). Cada fonte tem prós e contras.'},
+          {ico:'👥',name:'Recursos Humanos',txt:'Colaboradores operacionais (produção, atendimento), especialistas (marketing, finanças, TI) e gestores (coordenam e tomam decisões estratégicas).'},
+          {ico:'⚙️',name:'Recursos Materiais',txt:'Equipamentos (máquinas, dispositivos), tecnologia (softwares, sistemas) e materiais (insumos, matéria-prima para a operação).'},
+          {ico:'📋',name:'Registro da Empresa',txt:'Escolher a estrutura jurídica (MEI, EIRELI, LTDA), registrar na Junta Comercial e obter CNPJ na Receita Federal.'},
+          {ico:'🔒',name:'Propriedade Intelectual',txt:'Patentes (protegem invenções), marcas registradas (nomes e logotipos) e direitos autorais (obras literárias e artísticas).'},
+          {ico:'📜',name:'Licenças e Autorizações',txt:'Alvará de funcionamento, licença sanitária (alimentos/saúde) e licença ambiental (se a atividade impactar o meio ambiente).'},
+        ],
+        info:'💡 Capital próprio: maior controle, sem dívida. Investidores: traz dinheiro + experiência + rede de contatos, mas você cede participação. Empréstimo bancário: mantém controle total, mas tem juros e prazo de pagamento. Cada situação pede uma estratégia!'
+      },
+      quiz:[
+        {q:'Qual é considerado um recurso FINANCEIRO para implementar um negócio?',
+         opts:['Equipamentos e máquinas','Colaboradores operacionais','Capital próprio — investimento das economias pessoais dos sócios','Softwares de gestão'],
+         ans:2, fb:'✅ Capital próprio é recurso financeiro! Junto com investidores e empréstimos bancários, formam as 3 fontes de recursos financeiros. Equipamentos são materiais e colaboradores são recursos humanos.'},
+        {q:'O que são os recursos HUMANOS de uma empresa?',
+         opts:['Máquinas e equipamentos de produção','Capital fornecido por investidores externos','Softwares e sistemas de gestão','Colaboradores operacionais, especialistas e gestores que compõem a equipe'],
+         ans:3, fb:'✅ Recursos humanos são as pessoas! Colaboradores operacionais (que executam), especialistas (que desenvolvem estratégias) e gestores (que coordenam e decidem). Sem as pessoas certas, nenhum negócio funciona.'},
+        {q:'Qual documento legal é necessário para proteger o nome e o logotipo de uma empresa contra uso não autorizado?',
+         opts:['Alvará de funcionamento','Licença ambiental','Marca registrada — protege nome e logotipo contra uso não autorizado','Certidão negativa de débitos'],
+         ans:2, fb:'✅ Marca registrada é proteção da identidade! Sem registro, qualquer um pode usar seu nome e logotipo. Registrar a marca é um dos primeiros passos legais que todo empreendedor deve dar ao criar um negócio.'}
+      ]
+    },
+    {
+      title:'Crescimento, Inovação e Sustentabilidade do Negócio',
+      sub:'Semana 5 · Aula 3',
+      learn:{
+        tag:'🌱 Crescendo Bem',
+        title:'Como expandir um negócio de forma sustentável?',
+        body:`Expandir um negócio sem planejamento é arriscado. Crescer de forma <strong>sustentável e inovadora</strong> exige identificar os sinais certos e preparar a empresa para os novos desafios!`,
+        concepts:[
+          {ico:'📊',name:'Sinais para expandir',txt:'Lucro estável nos últimos 3 anos, alta demanda, clientes pedindo nova unidade, equipe motivada e finanças em ordem são sinais verdes para expansão.'},
+          {ico:'⚠️',name:'Cuidados antes de expandir',txt:'Antes de expandir, é crucial ter controle financeiro sólido — o processo é custoso e o lucro pode demorar a aparecer na nova unidade.'},
+          {ico:'🔬',name:'P&D (Pesquisa e Desenvolvimento)',txt:'Investir em estudos para desenvolver novos produtos e processos — a base da inovação contínua dentro do negócio.'},
+          {ico:'📡',name:'Análise de Tendências',txt:'Monitorar mudanças nas preferências dos consumidores e no mercado para se antecipar à concorrência.'},
+          {ico:'🔄',name:'Melhoria Contínua',txt:'Implementar processos que promovam evolução constante de produtos e serviços — nunca se acomodar com o que já funciona.'},
+          {ico:'🎯',name:'Flexibilidade Estratégica',txt:'Capacidade de ajustar estratégias para se alinhar com novas demandas de mercado. Rigidez é vulnerabilidade.'},
+        ],
+        info:'💊 Farmácia Bem-Estar (exemplo do material): após 5 anos de sucesso, Carolina identificou sinais para expandir — clientes fiéis, alta demanda, equipe motivada e tendência de mercado favorável. Expandiu de forma planejada e inovadora, preservando o atendimento humanizado que era seu diferencial.'
+      },
+      quiz:[
+        {q:'Qual combinação de sinais indica que um negócio está pronto para expandir?',
+         opts:['Muitas dívidas, poucos clientes e equipe desmotivada','Lucro estável por 3 anos, alta demanda, equipe motivada e finanças controladas','Apenas ter um produto novo para lançar','Concorrência fraca no mercado local'],
+         ans:1, fb:'✅ Expansão exige base sólida! Crescer sem finanças em ordem, equipe preparada e demanda real é receita para problemas. Os sinais certos mostram que o negócio está maduro para o próximo passo.'},
+        {q:'O que é P&D (Pesquisa e Desenvolvimento) no contexto de um negócio em crescimento?',
+         opts:['Departamento de pesquisa de preços dos concorrentes','Investimento em estudos para desenvolver novos produtos e processos — base da inovação contínua','Sistema de avaliação de desempenho dos funcionários','Pesquisa de satisfação de clientes pós-venda'],
+         ans:1, fb:'✅ P&D é o motor da inovação contínua! Empresas que investem em pesquisa e desenvolvimento criam produtos melhores, processos mais eficientes e ficam à frente da concorrência no longo prazo.'},
+        {q:'O que é "flexibilidade estratégica" para um negócio em crescimento?',
+         opts:['Capacidade de trabalhar em horários variados','Manter sempre a mesma estratégia independente das mudanças do mercado','Capacidade de ajustar estratégias quando o mercado ou o contexto muda — rigidez é vulnerabilidade','Flexibilizar os preços para atrair mais clientes'],
+         ans:2, fb:'✅ Flexibilidade é sobrevivência! O mercado muda — clientes, tecnologia, concorrência, economia. Empresas rígidas que não adaptam sua estratégia ficam para trás. Os grandes empreendedores ajustam o rumo sem perder o destino.'}
+      ]
+    }
+  ]
+}
+
+]; /* fim W */
+
+/* ═══════════════════════════
+   STATE
+═══════════════════════════ */
+const KEY = 'inov_quest_v2';
+let S = (() => {
+  try { const r = localStorage.getItem(KEY); if(r) return JSON.parse(r); } catch(e){}
+  return { xp:0, prog:[0,0,0,0,0], stars:[[],[],[],[],[]] };
+})();
+function save() { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch(e){} }
+
+let CW=0, CL=0, qI=0, qS=0;
+
+/* ═══════════════════════════
+   UTILS
+═══════════════════════════ */
+const $  = id => document.getElementById(id);
+function go(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('on'));
+  $(id).classList.add('on');
+  window.scrollTo({ top:0, behavior:'smooth' });
+}
+function setXP() { $('xp1').textContent = S.xp; $('xp2').textContent = S.xp; }
+function setPb(p) { $('pbar').style.width = p + '%'; }
+
+/* ═══════════════════════════
+   MAP
+═══════════════════════════ */
+function showMap() { renderMap(); go('map'); setXP(); }
+
+function renderMap() {
+  const g = $('wgrid'); g.innerHTML = '';
+  W.forEach((w, wi) => {
+    const done   = S.prog[wi];
+    const total  = w.levels.length;
+    const locked = wi > 0 && S.prog[wi-1] < W[wi-1].levels.length;
+    const full   = done >= total;
+    const stTot  = (S.stars[wi]||[]).reduce((a,b)=>a+b,0);
+
+    const el = document.createElement('div');
+    el.className = 'wc' + (locked?' locked':'') + (full?' done':'');
+
+    const corner = locked
+      ? '<div class="wc-corner lock">🔒</div>'
+      : full ? `<div class="wc-corner star">⭐ ${stTot}/${total*3}</div>` : '';
+
+    const dotHtml = w.levels.map((_,li) => {
+      const d = li < done, c = li === done && !locked;
+      return `<div class="dot ${d?'done':c?'cur':''}">${d?'✓':li+1}</div>`;
+    }).join('');
+
+    el.innerHTML = `
+      ${corner}
+      <span class="wc-emoji">${w.emoji}</span>
+      <div class="wc-tag px">MUNDO ${wi+1}</div>
+      <div class="wc-name">${w.name}</div>
+      <div class="wc-desc">${w.desc}</div>
+      <div class="dots">${dotHtml}</div>
+    `;
+    if (!locked) el.onclick = () => enterWorld(wi);
+    g.appendChild(el);
+  });
+}
+
+/* ═══════════════════════════
+   LEVEL
+═══════════════════════════ */
+function enterWorld(wi) {
+  CW = wi;
+  CL = Math.min(S.prog[wi], W[wi].levels.length - 1);
+  startLevel();
+}
+
+function startLevel() {
+  qI = 0; qS = 0;
+  $('lbadge').textContent = `Mundo ${CW+1} · Fase ${CL+1}/${W[CW].levels.length}`;
+  setPb(0);
+  go('lvl');
+  renderLearn(W[CW].levels[CL]);
+}
+
+function renderLearn(lv) {
+  const l = lv.learn;
+  const cards = l.concepts.map(c => `
+    <div class="ci">
+      <div class="ci-ico">${c.ico}</div>
+      <div class="ci-name">${c.name}</div>
+      <div class="ci-text">${c.txt}</div>
+    </div>
+  `).join('');
+
+  $('lcontent').innerHTML = `
+    <div class="card" style="animation:fadeUp .45s ease">
+      <span class="l-tag">${l.tag}</span>
+      <div class="l-title">${l.title}</div>
+      <div class="l-body">${l.body}</div>
+      <div class="cgrid">${cards}</div>
+      <div class="ibox">${l.info}</div>
+    </div>
+    <div style="text-align:center;margin-top:22px">
+      <button class="btn btn-ylw" onclick="startQuiz()">🎮 Iniciar Quiz →</button>
+    </div>
+  `;
+  setPb(15);
+}
+
+function startQuiz() { qI = 0; qS = 0; renderQ(); }
+
+function renderQ() {
+  const lv  = W[CW].levels[CL];
+  const q   = lv.quiz[qI];
+  const tot = lv.quiz.length;
+  setPb(15 + (qI / tot) * 85);
+
+  const KS = ['A','B','C','D'];
+  const optHtml = q.opts.map((o,i) => `
+    <button class="opt" style="animation:slideIn .35s ease ${i*.07}s both"
+            onclick="pick(${i})">
+      <span class="opt-k">${KS[i]}</span>${o}
+    </button>
+  `).join('');
+
+  $('lcontent').innerHTML = `
+    <div class="card" style="animation:fadeUp .45s ease">
+      <div class="qmeta">
+        <div class="qcount">Questão ${qI+1} de ${tot}</div>
+        <div class="qxp">🪙 ${qS*10} XP</div>
+      </div>
+      <div class="question">${q.q}</div>
+      <div class="opts">${optHtml}</div>
+      <div class="fb" id="fb"></div>
+    </div>
+  `;
+}
+
+function pick(idx) {
+  const lv = W[CW].levels[CL];
+  const q  = lv.quiz[qI];
+  const ok = idx === q.ans;
+
+  document.querySelectorAll('.opt').forEach((b,i) => {
+    b.disabled = true;
+    if (i === q.ans)           b.classList.add('ok');
+    else if (i === idx && !ok) b.classList.add('bad');
+  });
+
+  const fb = $('fb');
+  if (ok) { fb.className = 'fb ok show'; fb.textContent = q.fb; qS++; }
+  else     { fb.className = 'fb bad show'; fb.textContent = '❌ ' + q.fb; }
+
+  setTimeout(() => {
+    qI++;
+    if (qI < lv.quiz.length) renderQ();
+    else                      showResult();
+  }, 2350);
+}
+
+/* ═══════════════════════════
+   RESULT
+═══════════════════════════ */
+function showResult() {
+  const lv    = W[CW].levels[CL];
+  const total = lv.quiz.length;
+  const stars = qS === total ? 3 : qS >= total-1 ? 2 : qS >= 1 ? 1 : 0;
+  const xp    = stars * 50 + qS * 10;
+
+  if (!S.stars[CW]) S.stars[CW] = [];
+  S.stars[CW][CL] = Math.max(stars, S.stars[CW][CL] || 0);
+  if (CL >= S.prog[CW] && stars > 0) S.prog[CW] = CL + 1;
+  S.xp += xp; save(); setXP();
+
+  const M = {
+    3: { e:'🏆', t:'PERFEITO!',        s:'Você acertou tudo! Expert em Inovação!' },
+    2: { e:'🌟', t:'ÓTIMO!',           s:'Quase perfeito! Você domina o conteúdo.' },
+    1: { e:'👍', t:'BOM TRABALHO!',    s:'Continue praticando para dominar mais!' },
+    0: { e:'💪', t:'TENTE NOVAMENTE!', s:'Revise o conteúdo e tente outra vez!' },
+  };
+  const m = M[stars];
+
+  $('re').textContent    = m.e;
+  $('rt').textContent    = m.t;
+  $('rs').textContent    = m.s + ` (${qS}/${total} corretas)`;
+  $('rstar').textContent = '⭐'.repeat(stars) + '☆'.repeat(3 - stars);
+  $('rxp').textContent   = `+ ${xp} XP ganhos!`;
+
+  const btn = $('rnext');
+  const nL  = CL + 1;
+  const nW  = CW + 1;
+  if      (nL < W[CW].levels.length) { btn.textContent = 'Próxima Fase →';   btn.onclick = () => { CL = nL; startLevel(); }; }
+  else if (nW < W.length)            { btn.textContent = 'Próximo Mundo 🌍'; btn.onclick = () => { CW = nW; CL = 0; startLevel(); }; }
+  else                               { btn.textContent = '🏆 Ver Conquistas'; btn.onclick = showMap; }
+
+  go('res');
+  if (stars >= 2) rain();
+}
+
+/* ═══════════════════════════
+   CONFETTI
+═══════════════════════════ */
+function rain() {
+  const c = $('conf'); c.innerHTML = '';
+  const cols = ['#38bdf8','#fbbf24','#4ade80','#f472b6','#ffffff','#818cf8'];
+  for (let i = 0; i < 75; i++) {
+    const p = document.createElement('div');
+    p.className = 'cp';
+    const s = 7 + Math.random() * 9;
+    p.style.cssText = `
+      left:${Math.random()*100}%;
+      width:${s}px; height:${s}px;
+      background:${cols[Math.floor(Math.random()*cols.length)]};
+      animation-delay:${Math.random()*1.3}s;
+      border-radius:${Math.random()>.5?'50%':'3px'};
+    `;
+    c.appendChild(p);
+  }
+  setTimeout(() => c.innerHTML = '', 4200);
+}
+
+/* ═══════════════════════════
+   BOOT
+═══════════════════════════ */
+setXP();
+go('intro');
+</script>
+</body>
+</html>
